@@ -1,4 +1,4 @@
-package com.itheima.reggie.entity;
+package summer_projects.quickbitedelivery.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;

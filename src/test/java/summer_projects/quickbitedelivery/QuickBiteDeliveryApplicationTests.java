@@ -1,4 +1,4 @@
-package summerprojects.quickbitedelivery;
+package summer_projects.quickbitedelivery;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
