@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import summer_projects.quickbitedelivery.common.R;
@@ -114,6 +115,31 @@ public class EmployeeController {
         employeeService.page(pageInfo, lambdaQueryWrapper);
 
         return R.success(pageInfo);
+    }
+
+    /**
+     * update the employee info by its id
+     *
+     * @param request
+     * @param employee
+     * @return
+     */
+    @PutMapping
+    public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
+        log.info(employee.toString());
+        Object empId = request.getSession().getAttribute("employee");
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser((long) empId);
+        employeeService.updateById(employee);
+
+        return R.success("The employee info has been updated");
+    }
+
+    @GetMapping("/{id}")
+    public R<Employee> getById(@PathVariable Long id) {
+        log.info("Get employee's info by their id");
+        Employee employee = employeeService.getById(id);
+        return R.success(employee);
     }
 }
 

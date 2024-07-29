@@ -18,3 +18,7 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: ASSIGN_ID
+      logging:
+        level:
+          root: DEBUG
+          summer_projects.quickbitedelivery.config: DEBUG

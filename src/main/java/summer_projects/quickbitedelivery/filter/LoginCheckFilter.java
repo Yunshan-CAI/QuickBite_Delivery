@@ -35,7 +35,8 @@ public class LoginCheckFilter implements Filter {
                 "/employee/login",
                 "/employee/logout",
                 "/backend/**",
-                "/front/**"
+                "/front/**",
+                "/favicon.ico"
         };
 
         //check if this uri needs to be processed
