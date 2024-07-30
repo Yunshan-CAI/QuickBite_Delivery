@@ -1,1 +1,1 @@
-ErrorCollection 异常集锦：
+**ErrorCollection 异常集锦：**
