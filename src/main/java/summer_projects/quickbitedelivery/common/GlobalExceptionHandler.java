@@ -17,9 +17,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public R<String> exceptionHandler(SQLIntegrityConstraintViolationException ex) {
         log.error(ex.getMessage());
-        if(ex.getMessage().contains("Duplicate entry")){
+        if (ex.getMessage().contains("Duplicate entry")) {
             return R.error("The username you entered already existed");
         }
         return R.error("Unknown error");
+    }
+
+    @ExceptionHandler(CustomException.class)
+    public R<String> exceptionHandler(CustomException ex) {
+        log.error(ex.getMessage());
+        return R.error(ex.getMessage());
     }
 }

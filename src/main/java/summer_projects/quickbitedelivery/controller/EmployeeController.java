@@ -24,6 +24,7 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
+
     /**
      * 员工登录
      *
@@ -82,14 +83,14 @@ public class EmployeeController {
 
         //set the employee info
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
 
         //get the id of the logged user
         Long empId = (long) request.getSession().getAttribute("employee");
 
-        employee.setCreateUser(empId);
-        employee.setUpdateUser(empId);
+//        employee.setCreateUser(empId);
+//        employee.setUpdateUser(empId);
 
         employeeService.save(employee);
         return R.success("Successfully added a new employee");
@@ -127,10 +128,13 @@ public class EmployeeController {
     @PutMapping
     public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
         log.info(employee.toString());
-        Object empId = request.getSession().getAttribute("employee");
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser((long) empId);
+//        Object empId = request.getSession().getAttribute("employee");
+//        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setUpdateUser((long) empId);
         employeeService.updateById(employee);
+
+        long id = Thread.currentThread().getId();
+        log.info("current thread is {}", id);
 
         return R.success("The employee info has been updated");
     }

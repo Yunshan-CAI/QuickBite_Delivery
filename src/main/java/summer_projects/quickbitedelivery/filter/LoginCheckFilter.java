@@ -4,6 +4,7 @@ package summer_projects.quickbitedelivery.filter;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
+import summer_projects.quickbitedelivery.common.BaseContext;
 import summer_projects.quickbitedelivery.common.R;
 
 import javax.servlet.*;
@@ -25,6 +26,10 @@ public class LoginCheckFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+        //check the current thread
+        long id = Thread.currentThread().getId();
+        log.info("current thread is {}", id);
 
         //get the request's uri
         String requestURI = request.getRequestURI();
@@ -52,6 +57,8 @@ public class LoginCheckFilter implements Filter {
         //check if login, if yes, let it go
         if (request.getSession().getAttribute("employee") != null) {
             log.info("already logged, let it go");
+            Long empId = (Long) request.getSession().getAttribute("employee");
+            BaseContext.setCurentId(empId);
             filterChain.doFilter(request, response);
             return;
         }
