@@ -6,6 +6,7 @@
 
 # Errors (按项目进度排序)
 
+
 ## day01 那个我一直没有找到问题的错误，再把文件夹下载一下看看问题到底出在哪里
 
 ## day02 加了WebMvcConfig类之后
@@ -17,7 +18,6 @@
 ```
 项目名:
   path: 存放的文件夹路径
-
 ```
 注意项目名一定要顶格写，path冒号后面要留空格，文件夹路径后面要加/，如 /Users/wentibaobao/Desktop/QuickBite Delivery/upload/
 
