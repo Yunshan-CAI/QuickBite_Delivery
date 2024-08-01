@@ -9,6 +9,8 @@ import summer_projects.quickbitedelivery.common.R;
 import summer_projects.quickbitedelivery.entity.Category;
 import summer_projects.quickbitedelivery.service.CategoryService;
 
+import java.util.List;
+
 
 @Slf4j
 @RestController
@@ -51,6 +53,15 @@ public class CategoryController {
         log.info("The updated category info: {}", category);
         categoryService.updateById(category);
         return R.success("The category has been updatedd.");
+    }
+
+    @GetMapping("/list")
+    public R<List<Category>> list(Category category) {
+        LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(category.getType() != null, Category::getType, category.getType());
+        queryWrapper.orderByAsc(Category::getSort).orderByDesc(Category::getUpdateTime);
+        List<Category> list = categoryService.list(queryWrapper);
+        return R.success(list);
     }
 
 }

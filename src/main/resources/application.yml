@@ -22,3 +22,5 @@ mybatis-plus:
         level:
           root: DEBUG
           summer_projects.quickbitedelivery.config: DEBUG
+quickbite:
+  path: /Users/wentibaobao/Desktop/QuickBite Delivery/upload/
