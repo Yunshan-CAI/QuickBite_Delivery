@@ -25,7 +25,9 @@
 
 程序可以跑，但是在浏览器里面加载页面就会出现如下：
 
+
 ![error schreenshot](https://github.com/Yunshan-CAI/QuickBite_Delivery/blob/513300868a726fa1a6e5548066d14626dff7c6bc/errors/screenshot1)
+
 
 调试了相当一段时间，最后根据弹幕提示找到了csdn里的[这一个帖子](https://blog.csdn.net/qq_69626670/article/details/127584663)，
 问题在于WebMvcConfig这个类继承WebMvcConfigSupport之后，会导致默认配置被覆盖，需要重新配置静态资源。
