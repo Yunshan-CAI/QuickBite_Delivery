@@ -13,6 +13,7 @@
 
 在根据视频里的代码对WebMvcConfig这个类进行编辑，视频里与给的资料里的这个类的addResourceHandlers方法都如下：
 
+
 ```
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -21,12 +22,14 @@
         registry.addResourceHandler("/front/**").addResourceLocations("classpath:/front/");
     }
 ```
+
 程序可以跑，但是在浏览器里面加载页面就会出现如下：
 
-调试了相当一段时间，最后根据弹幕提示看到了csdn里的[这一个帖子](https://blog.csdn.net/qq_69626670/article/details/127584663)，
+调试了相当一段时间，最后根据弹幕提示找到了csdn里的[这一个帖子](https://blog.csdn.net/qq_69626670/article/details/127584663)，
 问题在于WebMvcConfig这个类继承WebMvcConfigSupport之后，会导致默认配置被覆盖，需要重新配置静态资源。
 
 方法重写如下，注意根据你自己的目录结构进行修改，我的目录结构基本跟黑马的一致：
+
 
 ```
     @Override
