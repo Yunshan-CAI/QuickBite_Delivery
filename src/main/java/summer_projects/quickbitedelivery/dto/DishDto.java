@@ -1,5 +1,6 @@
 package summer_projects.quickbitedelivery.dto;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import summer_projects.quickbitedelivery.entity.Dish;
 import summer_projects.quickbitedelivery.entity.DishFlavor;
