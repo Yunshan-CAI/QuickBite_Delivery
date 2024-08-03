@@ -9,9 +9,47 @@
 
 ## day01 那个我一直没有找到问题的错误，再把文件夹下载一下看看问题到底出在哪里
 
-## day02 加了WebMvcConfig类之后
+## day02 
+
+在根据视频里的代码对WebMvcConfig这个类进行编辑，视频里与给的资料里的这个类的addResourceHandlers方法都如下：
+
+
+```
+    @Override
+    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        log.info("开始进行静态资源映射...");
+        registry.addResourceHandler("/backend/**").addResourceLocations("classpath:/backend/");
+        registry.addResourceHandler("/front/**").addResourceLocations("classpath:/front/");
+    }
+```
+
+程序可以跑，但是在浏览器里面加载页面就会出现如下：
+
+
+![error schreenshot](https://github.com/Yunshan-CAI/QuickBite_Delivery/blob/513300868a726fa1a6e5548066d14626dff7c6bc/errors/screenshot1)
+
+
+调试了相当一段时间，最后根据弹幕提示找到了csdn里的[这一个帖子](https://blog.csdn.net/qq_69626670/article/details/127584663)，
+问题在于WebMvcConfig这个类继承WebMvcConfigSupport之后，会导致默认配置被覆盖，需要重新配置静态资源。
+
+方法重写如下，注意根据你自己的目录结构进行修改，我的目录结构基本跟黑马的一致：
+
+
+```
+    @Override
+    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        log.info("开始进行静态资源映射...");
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/resources/")
+                .addResourceLocations("classpath:/static/");
+
+        super.addResourceHandlers(registry);
+    }
+```
+
 
 ## day04 
+
 
 在实现上传功能时，在yml里面path的书写格式要注意，应该是这样的：
 
