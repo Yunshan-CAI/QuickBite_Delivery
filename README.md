@@ -23,7 +23,7 @@
     }
 ```
 
-程序可以跑，但是在浏览器里面加载页面就会出现如下：
+程序可以跑，但是在浏览器里面加载页面就会出现 "WhileLabel Error Page"：
 
 
 ![error schreenshot](https://github.com/Yunshan-CAI/QuickBite_Delivery/blob/513300868a726fa1a6e5548066d14626dff7c6bc/errors/screenshot1)
