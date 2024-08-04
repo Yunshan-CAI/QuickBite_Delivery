@@ -179,6 +179,8 @@ public interface DishMapper extends BaseMapper<Dish> {
 }
 ```
 
+这样写controller里的方法会简洁很多。
+
 
 
 
