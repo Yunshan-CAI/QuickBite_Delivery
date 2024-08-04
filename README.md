@@ -64,15 +64,18 @@
 
 ### 分页查询的其他解决方案
 
-在62节中为了实现菜品的分类查询中的信息完善（因为category_name在category表而不是dish表中），黑马的DishController里面的page方法如下，代码注释了我自己的理解：
+1) “官方”解决方案
+
+在62节中为了实现菜品的分类查询中的信息完善（因为category_name在category表而不是dish表中），黑马的DishController里面的page方法如下，代码注释了我自己的理解，原谅我的中英夹杂：
 
 ```
-         //“官方”解决方案：
+    @GetMapping("/page")
+    public R<Page> page(int page, int pageSize, String name) {
 
          //create a pagination object
         Page<Dish> pageInfo = new Page<>(page, pageSize);
 
-        //create a new page object with the type of dish
+        //create a new page object with type dish
         Page<DishDto> dishDtoPage = new Page<>(page,pageSize);
 
          //create a lambdaquerywrapper
@@ -81,7 +84,7 @@
         //query the dish info by the dish name 拿到了主体信息
         dishLambdaQueryWrapper.like(name != null, Dish::getName, name);
 
-        //把数据传到了pageInfo里面并进行分页
+        //把数据传到了pageInfo里面
         dishService.page(pageInfo, dishLambdaQueryWrapper);
 
         //copy the values in page<dish> object to page<dishdto> but exclude the List<T> records,which is optional
@@ -95,7 +98,7 @@
             //create a new dishdto object
             DishDto dishDto = new DishDto();
 
-            //copy the values in every item (dish type) in the list to the newly created dishdto
+            //copy the values in every item (dish type) in the list to the new created dishdto
             BeanUtils.copyProperties(item, dishDto);
 
             //get every item's category id
@@ -104,23 +107,81 @@
             //use category service to find the corresponding category object with the id
             Category category = categoryService.getById(categoryId);
 
-            //get the category's name
+            //get category's name
             String categoryName = category.getName();
 
             //give this value, the categoryName to the dishdto object which has this variable
             dishDto.setCategoryName(categoryName);
 
             //return dishdto rather than the item in the list, this will make it a list of dishdtos
-            return dishDto; //return这个是什么写法？
+            return dishDto; 
         }).collect(Collectors.toList());
 
         //give the list of dishdtos to the dishstopage object 把list再封装进另一个page里面
         dishDtoPage.setRecords(list);
 
-        //总结：这个写法之所以感觉复杂是因为涉及categoryname->category; category id->item/dish->list<dish> records->page; dishsto->list<dishdto> records->page这些层级
+        return R.success(resultPage);
+
+        //总结：这个写法之所以感觉复杂是因为涉及categoryname->category; category id->item/dish->list<dish> records->page; dishsto->list<dishdto> records->page这些层级在
         //还涉及了page<dish>->page<dishdto>, item/dish->dishdto 的拷贝
+    }
+```
+
+但是可以看到这个方法写得相当复杂且代码较多，全部都堆积在controller类里面，mapper和serviceImpl里面几乎没有什么代码。
+
+2) 用sql进行联表查询
+
+受弹幕区的建议，我尝试用sql进行联表查询，也遇到了好些问题，最终做了出来，我觉得对于新手来说能真的跑通还是有难度的。
+
+上代码，DishController里的：
 
 ```
+    @GetMapping("/page")
+    public R<Page> page(int page, int pageSize, String name) {
+
+        // 创建分页对象
+        Page<DishDto> dishDtoPage = new Page<>(page, pageSize);
+
+        // 调用service方法进行分页查询
+        Page<DishDto> resultPage = dishService.listWithCategory(dishDtoPage, name);
+
+        return R.success(resultPage);
+    }
+```
+
+DishService:
+
+```
+Page<DishDto> listWithCategory(Page<DishDto> page, String name);
+```
+
+DishServiceImpl:
+
+```
+    @Override
+    public Page<DishDto> listWithCategory(Page<DishDto> page, String name) {
+        List<DishDto> dishDtos = dishMapper.listWithCategory(page, name);
+        page.setRecords(dishDtos);
+        return page;
+    }
+```
+
+DishMapper:
+
+```
+@Mapper
+public interface DishMapper extends BaseMapper<Dish> {
+    @Select("SELECT d.*, c.name AS category_name " +
+            "FROM dish d " +
+            "LEFT JOIN category c ON d.category_id = c.id " +
+            "WHERE d.name LIKE CONCAT('%', COALESCE(#{name}, ''), '%')")
+    List<DishDto> listWithCategory(Page<DishDto> page, @Param("name") String name);
+}
+```
+
+
+
+
 
 
 
