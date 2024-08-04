@@ -50,6 +50,7 @@
 
 ## day04 
 
+### BeanCreationException & IllegalArgumentException
 
 在实现上传功能时，在yml里面path的书写格式要注意，应该是这样的：
 
@@ -60,4 +61,68 @@
 注意项目名一定要顶格写，path冒号后面要留空格，文件夹路径后面要加/，如 /Users/wentibaobao/Desktop/QuickBite Delivery/upload/
 
 否则会容易出现BeanCreationException和IllegalArgumentException。
+
+### 分页查询的其他解决方案
+
+在62节中为了实现菜品的分类查询中的信息完善（因为category_name在category表而不是dish表中），黑马的DishController里面的page方法如下，代码注释了我自己的理解：
+
+```
+         //“官方”解决方案：
+
+         //create a pagination object
+        Page<Dish> pageInfo = new Page<>(page, pageSize);
+
+        //create a new page object with the type of dish
+        Page<DishDto> dishDtoPage = new Page<>(page,pageSize);
+
+         //create a lambdaquerywrapper
+        LambdaQueryWrapper<Dish> dishLambdaQueryWrapper = new LambdaQueryWrapper<>();
+
+        //query the dish info by the dish name 拿到了主体信息
+        dishLambdaQueryWrapper.like(name != null, Dish::getName, name);
+
+        //把数据传到了pageInfo里面并进行分页
+        dishService.page(pageInfo, dishLambdaQueryWrapper);
+
+        //copy the values in page<dish> object to page<dishdto> but exclude the List<T> records,which is optional
+        BeanUtils.copyProperties(pageInfo, dishDtoPage, "records");
+
+        //get the whole package of dish info from pageInfo object 拿到主体信息里面的相关信息
+        List<Dish> records = pageInfo.getRecords();
+
+        //把主体信息拆开，通过与categoryservice联动得到缺失的信息，把主体信息和新得到的信息都封装进另一个list里面
+        List<DishDto> list = records.stream().map(item -> {
+            //create a new dishdto object
+            DishDto dishDto = new DishDto();
+
+            //copy the values in every item (dish type) in the list to the newly created dishdto
+            BeanUtils.copyProperties(item, dishDto);
+
+            //get every item's category id
+            Long categoryId = item.getCategoryId();
+
+            //use category service to find the corresponding category object with the id
+            Category category = categoryService.getById(categoryId);
+
+            //get the category's name
+            String categoryName = category.getName();
+
+            //give this value, the categoryName to the dishdto object which has this variable
+            dishDto.setCategoryName(categoryName);
+
+            //return dishdto rather than the item in the list, this will make it a list of dishdtos
+            return dishDto; //return这个是什么写法？
+        }).collect(Collectors.toList());
+
+        //give the list of dishdtos to the dishstopage object 把list再封装进另一个page里面
+        dishDtoPage.setRecords(list);
+
+        //总结：这个写法之所以感觉复杂是因为涉及categoryname->category; category id->item/dish->list<dish> records->page; dishsto->list<dishdto> records->page这些层级
+        //还涉及了page<dish>->page<dishdto>, item/dish->dishdto 的拷贝
+
+```
+
+
+
+
 
