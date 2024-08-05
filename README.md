@@ -181,6 +181,57 @@ public interface DishMapper extends BaseMapper<Dish> {
 
 这样写controller里的方法会简洁很多。
 
+3) 用 MyBatis 的 XML 配置文件进行数据库映射和查询
+
+整个项目都用的是mybatisplus，但是我也想用mybatis也尝试一下。先在resources包下面建一个DishMapper.xml文件：
+
+```
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="summer_projects.quickbitedelivery.mapper.DishMapper">
+    <select id="selectDtos" resultType="summer_projects.quickbitedelivery.dto.DishDto">
+        SELECT d.*, c.name AS category_name
+        FROM dish d
+        LEFT JOIN category c ON d.category_id = c.id
+        WHERE d.name LIKE CONCAT('%', COALESCE(#{name}, ''), '%')
+    </select>
+</mapper>
+
+```
+注意id，resultType要与你自己的实际情况一致。
+
+DishMapper类：
+
+```
+    // 方法定义，使用XML配置SQL
+    List<DishDto> selectDtos(Page<DishDto> page, @Param("name") String name);
+```
+
+DishService类： 
+
+```
+    Page<DishDto> getDtos(int page, int pageSize, String name);
+```
+
+DishServiceImpl类：
+
+```
+    @Override
+    public Page<DishDto> getDtos(int page, int pageSize, String name) {
+        Page<DishDto> pageParam = new Page<>(page, pageSize);
+        List<DishDto> dishList = dishMapper.selectDtos(pageParam, name);
+        pageParam.setRecords(dishList);
+        return pageParam;
+    }
+```
+mybatisplus 实现连表查询复杂在网上我看到有很多人诟病，我尝试的两种方法都涉及写sql。
+
+不知道在业界这种问题一般是怎么解决的？或者公司里一般不用mybatisplus？有懂行的朋友欢迎交流，想知道什么是这种情况下比较好的practice。
+
+
 
 
 
