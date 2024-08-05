@@ -201,7 +201,7 @@ public interface DishMapper extends BaseMapper<Dish> {
 </mapper>
 
 ```
-注意id，resultType要与你自己的实际情况一致。
+注意id、namespace和resultType要与你自己的实际情况一致。
 
 DishMapper类：
 
