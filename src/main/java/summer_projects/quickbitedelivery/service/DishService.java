@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import summer_projects.quickbitedelivery.common.R;
 import summer_projects.quickbitedelivery.dto.DishDto;
 import summer_projects.quickbitedelivery.entity.Dish;
 
@@ -22,4 +24,5 @@ public interface DishService extends IService<Dish> {
     DishDto getDishById(Long id);
 
     void updateWithFlavor(DishDto dishDto);
+
 }

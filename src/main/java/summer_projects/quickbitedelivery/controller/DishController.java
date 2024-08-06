@@ -123,5 +123,15 @@ public class DishController {
         dishService.updateWithFlavor(dishDto);
         return R.success("Successfully updated a dish");
     }
+
+    @GetMapping("/list")
+    public R<List<Dish>> getDishByCategory(Dish dish) {
+        LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
+        //查询状态为1（在售状态）的菜品
+        wrapper.eq(Dish::getStatus, 1);
+        List<Dish> list = dishService.list(wrapper);
+        return R.success(list);
+    }
 }
 
