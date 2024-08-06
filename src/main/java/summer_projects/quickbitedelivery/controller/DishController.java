@@ -1,6 +1,7 @@
 package summer_projects.quickbitedelivery.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -11,10 +12,12 @@ import summer_projects.quickbitedelivery.common.R;
 import summer_projects.quickbitedelivery.dto.DishDto;
 import summer_projects.quickbitedelivery.entity.Category;
 import summer_projects.quickbitedelivery.entity.Dish;
+import summer_projects.quickbitedelivery.mapper.DishMapper;
 import summer_projects.quickbitedelivery.service.CategoryService;
 import summer_projects.quickbitedelivery.service.DishFlavorService;
 import summer_projects.quickbitedelivery.service.DishService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,12 +30,8 @@ import java.util.stream.Collectors;
  */
 public class DishController {
 
-
     @Autowired
     private DishService dishService;
-
-    @Autowired
-    private DishFlavorService dishFlavorService;
 
     @Autowired
     private CategoryService categoryService;
@@ -46,17 +45,22 @@ public class DishController {
 
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name) {
-        //create a pagination object
+
+ /*      //“官方”解决方案：
+         //create a pagination object
         Page<Dish> pageInfo = new Page<>(page, pageSize);
-        //create a lambdaquerywrapper
+
+        //create a new page object with type dish
+        Page<DishDto> dishDtoPage = new Page<>(page,pageSize);
+
+         //create a lambdaquerywrapper
         LambdaQueryWrapper<Dish> dishLambdaQueryWrapper = new LambdaQueryWrapper<>();
+
         //query the dish info by the dish name 拿到了主体信息
         dishLambdaQueryWrapper.like(name != null, Dish::getName, name);
+
         //return the dish info? 再研究
         dishService.page(pageInfo, dishLambdaQueryWrapper);
-
-        //create a new page object with type dish dto Page研究一下
-        Page<DishDto> dishDtoPage = new Page<>();
 
         //copy the values in page<dish> object to page<dishdto> but exclude the List<T> records,which is optional
         BeanUtils.copyProperties(pageInfo, dishDtoPage, "records");
@@ -68,16 +72,22 @@ public class DishController {
         List<DishDto> list = records.stream().map(item -> {
             //create a new dishdto object
             DishDto dishDto = new DishDto();
+
             //copy the values in every item (dish type) in the list to the new created dishdto
             BeanUtils.copyProperties(item, dishDto);
+
             //get every item's category id
             Long categoryId = item.getCategoryId();
+
             //use category service to find the corresponding category object with the id
             Category category = categoryService.getById(categoryId);
+
             //get category's name
             String categoryName = category.getName();
+
             //give this value, the categoryName to the dishdto object which has this variable
             dishDto.setCategoryName(categoryName);
+
             //return dishdto rather than the item in the list, this will make it a list of dishdtos
             return dishDto; //return这个是什么写法？
         }).collect(Collectors.toList());
@@ -86,9 +96,32 @@ public class DishController {
         dishDtoPage.setRecords(list);
 
         //总结：这个写法之所以感觉复杂是因为涉及categoryname->category; category id->item/dish->list<dish> records->page; dishsto->list<dishdto> records->page这些层级在
-        //还涉及了page<dish>->page<dishdto>, item/dish->dishdto 的拷贝
-        //整体确实有些太麻烦 看看有没有其他的方法
+        //还涉及了page<dish>->page<dishdto>, item/dish->dishdto 的拷贝*/
 
-        return R.success(dishDtoPage);
+  /*      //解决方案二，其他代码主要在dishmapper和dishserviceimpl里面
+
+        // 创建分页对象
+        Page<DishDto> dishDtoPage = new Page<>(page, pageSize);
+
+        // 调用service方法进行分页查询
+        Page<DishDto> resultPage = dishService.listWithCategory(dishDtoPage, name);
+*/
+        //解决方案三：用 MyBatis 的 XML 配置文件进行数据库映射和查询
+        Page<DishDto> resultPage = dishService.getDtos(page, pageSize, name);
+
+        return R.success(resultPage);
+    }
+
+    @GetMapping("/{id}")
+    public R<DishDto> getDish(@PathVariable Long id) {
+        DishDto dishById = dishService.getDishById(id);
+        return R.success(dishById);
+    }
+
+    @PutMapping
+    public R<String> update(@RequestBody DishDto dishDto) {
+        dishService.updateWithFlavor(dishDto);
+        return R.success("Successfully updated a dish");
     }
 }
+

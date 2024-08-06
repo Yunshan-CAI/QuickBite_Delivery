@@ -1,4 +1,4 @@
-//start the server
+//start the mysql server
 // sudo /usr/local/mysql-8.4.1-macos14-arm64/support-files/mysql.server start
 
 package summer_projects.quickbitedelivery;
