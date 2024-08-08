@@ -257,14 +257,19 @@ mybatisplus 实现连表查询复杂在网上我看到有很多人诟病，我�
         List<SetmealDto> collect = list.stream().map(item -> {
             //创建setmealdto对象
             SetmealDto setmealDto = new SetmealDto();
+
             //把item里的属性复制过去
             BeanUtils.copyProperties(item, setmealDto);
+
             //取到category_id
             Long categoryId = item.getCategoryId();
+
             //取到category对象 根据category_id
             Category category = categoryService.getById(categoryId);
+
             //给setmealdto里面的category赋值
             setmealDto.setCategoryName(category.getName());
+
             return setmealDto;
         }).collect(Collectors.toList());
 
@@ -274,11 +279,8 @@ mybatisplus 实现连表查询复杂在网上我看到有很多人诟病，我�
     }
 ```
 我知道复制到dtoPage里面的范型实际上仍然是Setmeal类型而非SetmealDto类型的，我通过断点观察传过来的数据也验证了这一点。
-
-所以我的想法是，我知道 List<SetmealDto> list = dtoPage.getRecords() list里面的范型实际上是Setmeal类型的，but why it hurts?
-
-正确解法这里是这样写的：List<Setmeal> list = pageInfo.getRecords()，得到的list的范型也是Setmeal，那么我的解法为什么不行呢？
-
+但是我的想法是，我知道 List<SetmealDto> list = dtoPage.getRecords()里list的范型实际上是Setmeal类型的，but why it hurts?
+正确解法这里是这样写的：List<Setmeal> list = pageInfo.getRecords()，得到list的范型也是Setmeal，那么我的解法为什么不行呢？
 虽然我的list名义上范型是SetmealDto，但它实际上是Setmeal类型的不就行了吗？
 
 Chat的解释是这样的：
@@ -291,8 +293,8 @@ Chat的解释是这样的：
 
 >在 Java 中，泛型类型在继承关系上是不可变的，即：
 
-    >SetmealDto 是 Setmeal 的子类，但 List<SetmealDto> 不是 List<Setmeal> 的子类。
-    >List<Setmeal> 和 List<SetmealDto> 是完全不同的类型，不能相互转换。
+    SetmealDto 是 Setmeal 的子类，但 List<SetmealDto> 不是 List<Setmeal> 的子类。
+    List<Setmeal> 和 List<SetmealDto> 是完全不同的类型，不能相互转换。
 
 
 
