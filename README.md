@@ -231,12 +231,78 @@ mybatisplus 实现连表查询复杂在网上我看到有很多人诟病，我�
 
 不知道在业界这种问题一般是怎么解决的？或者公司里一般不用mybatisplus？有懂行的朋友欢迎交流，想知道什么是这种情况下比较好的practice。
 
+## day05 
+
+### ClassCastException
+
+套餐的分页查询遇到了几乎跟菜品分页查询一样的问题，解决方案也与上面的类似👆。
+
+这一次我尝试自己写page里面的方法，结果遇到了ClassCastException，我的错误版本如下：
+
+```
+    @GetMapping("/page")
+    public R<Page> page(int page, int pageSize, String name) {
+        Page<Setmeal> pageInfo = new Page<>(page, pageSize);
+        LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
+        wrapper.like(name != null, Setmeal::getName, name);
+        setmealService.page(pageInfo, wrapper);
+
+        Page<SetmealDto> dtoPage = new Page<>();
+        //copy the properties of pageInfo to dtoPage
+        BeanUtils.copyProperties(pageInfo, dtoPage);
+
+        //get the records from dtoPage, 这时候的范型是<Setmeal>
+        List<SetmealDto> list = dtoPage.getRecords();
+
+        List<SetmealDto> collect = list.stream().map(item -> {
+            //创建setmealdto对象
+            SetmealDto setmealDto = new SetmealDto();
+
+            //把item里的属性复制过去
+            BeanUtils.copyProperties(item, setmealDto);
+
+            //取到category_id
+            Long categoryId = item.getCategoryId();
+
+            //取到category对象 根据category_id
+            Category category = categoryService.getById(categoryId);
+
+            //给setmealdto里面的category赋值
+            setmealDto.setCategoryName(category.getName());
+
+            return setmealDto;
+        }).collect(Collectors.toList());
+
+        dtoPage.setRecords(list);
+
+        return R.success(dtoPage);
+    }
+```
+我知道复制到dtoPage里面的范型实际上仍然是Setmeal类型而非SetmealDto类型的，我通过断点观察传过来的数据也验证了这一点。
+
+但是我的想法是，我知道 List<SetmealDto> list = dtoPage.getRecords()里list的范型实际上是Setmeal类型的，but why it hurts?
+
+正确解法这里是这样写的：List<Setmeal> list = pageInfo.getRecords()，得到list的范型也是Setmeal，那么我的解法为什么不行呢？
+
+虽然我的list名义上范型是SetmealDto，但它实际上是Setmeal类型的不就行了吗？
+
+Chat的解释是这样的：
+
+>你尝试将 List<Setmeal> 直接当作 List<SetmealDto> 使用。虽然在运行时，这两者都被擦除成 List，但编译器在编译时会检查 List<Setmeal> 和 List<SetmealDto> 之间的兼容性。由于它们是不同的类型，编译器会防止你直接将 List<Setmeal> 转换为 List<SetmealDto>。
+
+>在编译阶段，这种不匹配会通过编译警告或错误提示出来。即使这种转换在某些情况下被强制允许，实际在运行时依然可能会失败，导致 ClassCastException。
+
+虽然SetmealDto继承了Setmeal，但是，
+
+>在 Java 中，泛型类型在继承关系上是不可变的，即：
+
+>   SetmealDto 是 Setmeal 的子类，但 List<SetmealDto> 不是 List<Setmeal> 的子类。
+>   List<Setmeal> 和 List<SetmealDto> 是完全不同的类型，不能相互转换。
 
 
 
+# 代码可以优化的地方：
 
-
-
-
+到底哪些代码可以写到controller层，哪些写在service mapper层，需要明确一下然后把代码清理一下。
 
 
