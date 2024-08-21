@@ -16,8 +16,9 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         log.info(metaObject.toString());
         metaObject.setValue("createTime", LocalDateTime.now());
         metaObject.setValue("updateTime", LocalDateTime.now());
-        metaObject.setValue("createUser", BaseContext.getCurrentId());
-        metaObject.setValue("updateUser", BaseContext.getCurrentId());
+        //为了移动端添加地址要把这里暂时注释掉
+        //metaObject.setValue("createUser", BaseContext.getCurrentId());
+        //metaObject.setValue("updateUser", BaseContext.getCurrentId());
 
     }
 
@@ -25,7 +26,9 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
     public void updateFill(MetaObject metaObject) {
         log.info("updatefill automatically");
         log.info(metaObject.toString());
+
         metaObject.setValue("updateTime", LocalDateTime.now());
+
         metaObject.setValue("updateUser", BaseContext.getCurrentId());
 
         //check the current thread

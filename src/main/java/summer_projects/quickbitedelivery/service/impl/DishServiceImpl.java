@@ -104,4 +104,27 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
     }
 
+    @Override
+    public List<DishDto> getDishDto(Dish dish) {
+        LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
+        //查询状态为1（在售状态）的菜品
+        wrapper.eq(Dish::getStatus, 1);
+        List<Dish> list = this.list(wrapper);
+
+        List<DishDto> dtoList = new ArrayList<>();
+        BeanUtils.copyProperties(list, dtoList);
+
+        List<DishDto> collect = list.stream().map(item -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+            LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(DishFlavor::getDishId, item.getId());
+            List<DishFlavor> flavors = dishFlavorService.list(queryWrapper);
+            dishDto.setFlavors(flavors);
+            return dishDto;
+        }).collect(Collectors.toList());
+        return collect;
+    }
+
 }

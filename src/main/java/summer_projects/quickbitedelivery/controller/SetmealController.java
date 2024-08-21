@@ -10,6 +10,7 @@ import summer_projects.quickbitedelivery.common.CustomException;
 import summer_projects.quickbitedelivery.common.R;
 import summer_projects.quickbitedelivery.dto.SetmealDto;
 import summer_projects.quickbitedelivery.entity.Category;
+import summer_projects.quickbitedelivery.entity.Dish;
 import summer_projects.quickbitedelivery.entity.Setmeal;
 import summer_projects.quickbitedelivery.entity.SetmealDish;
 import summer_projects.quickbitedelivery.service.CategoryService;
@@ -34,46 +35,29 @@ public class SetmealController {
     private CategoryService categoryService;
 
     /**
-     * save the setmeal info to the database
+     * 新增套餐
      *
      * @param setmealDto
      * @return
      */
     @PostMapping
     public R<String> save(@RequestBody SetmealDto setmealDto) {
-        setmealService.save(setmealDto);
-        List<SetmealDish> setmealDishes = setmealDto.getSetmealDishes();
-        Long id = setmealDto.getId();
-        for (SetmealDish setmealDish : setmealDishes) {
-            setmealDish.setSetmealId(id);
-        }
-        setmealDishService.saveBatch(setmealDishes);
+        setmealService.saveWithDishes(setmealDto);
         return R.success("Successfully saved a setmeal");
     }
 
+    /**
+     * 对套餐进行分页查询
+     *
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name) {
-        Page<Setmeal> pageInfo = new Page<>(page, pageSize);
-        LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(name != null, Setmeal::getName, name);
-        setmealService.page(pageInfo, wrapper);
-
-        Page<SetmealDto> dtoPage = new Page<>();
-        //copy the properties of pageInfo to dtoPage
-        BeanUtils.copyProperties(pageInfo, dtoPage, "records");
-
-        List<SetmealDto> list = pageInfo.getRecords().stream().map(item -> {
-            SetmealDto setmealDto = new SetmealDto();
-            BeanUtils.copyProperties(item, setmealDto);
-            Long categoryId = item.getCategoryId();
-            Category category = categoryService.getById(categoryId);
-            setmealDto.setCategoryName(category.getName());
-            return setmealDto;
-        }).collect(Collectors.toList());
-
-        dtoPage.setRecords(list);
-
-        return R.success(dtoPage);
+        Page resultPage = setmealService.page(page, pageSize, name);
+        return R.success(resultPage);
     }
 
     /**
@@ -84,30 +68,27 @@ public class SetmealController {
      */
     @PostMapping("/status/{statusNum}")
     public R<String> setStatus(Long ids, @PathVariable int statusNum) {
-        LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ids != null, Setmeal::getId, ids);
-
-        Setmeal setmeal = setmealService.getById(ids);
-        setmeal.setStatus(statusNum);
-
-        setmealService.update(setmeal, wrapper);
+        setmealService.setStatus(ids, statusNum);
         return R.success("Successfully changed setmeal status");
     }
 
+    /**
+     * 删除在停售状态的套餐
+     *
+     * @param ids
+     * @return
+     */
     @DeleteMapping
     public R<String> delete(@RequestParam List<Long> ids) {
-
-        for (Long id : ids) {
-            if (setmealService.getById(id).getStatus() == 0) {
-                setmealService.removeById(id);
-                LambdaQueryWrapper<SetmealDish> wrapper = new LambdaQueryWrapper<>();
-                wrapper.eq(id != null, SetmealDish::getSetmealId, id);
-                setmealDishService.remove(wrapper);
-            } else {
-                throw new CustomException("套餐正在售卖中，不能删除");
-            }
-        }
+        setmealService.deleteWithDishes(ids);
         return R.success("Successfully deleted the setmeal");
+    }
+
+    //数据传到前端了但不知道为什么套餐包含的菜品无法显示在页面上，我觉得是因为前端没有写
+    @GetMapping("/list")
+    public R<List<SetmealDto>> getSetmealDtos( Setmeal setmeal) {
+        List<SetmealDto> setmealDtos = setmealService.getSetmealDtos(setmeal);
+        return R.success(setmealDtos);
     }
 }
 

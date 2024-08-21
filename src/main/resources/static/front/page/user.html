@@ -180,13 +180,13 @@
                 },
                 async toPageLogin(){
                     const res = await loginoutApi()
-                    if(res.code === 1){
+                      if(res.code === 1){
                         window.requestAnimationFrame(()=>{
                             window.location.href = '/front/page/login.html'
-                        }) 
+                        })
                     }else{
                         this.$notify({ type:'warning', message:res.msg});
-                    }                
+                    }
                 }
             }
         })

@@ -12,6 +12,7 @@ import summer_projects.quickbitedelivery.common.R;
 import summer_projects.quickbitedelivery.dto.DishDto;
 import summer_projects.quickbitedelivery.entity.Category;
 import summer_projects.quickbitedelivery.entity.Dish;
+import summer_projects.quickbitedelivery.entity.DishFlavor;
 import summer_projects.quickbitedelivery.mapper.DishMapper;
 import summer_projects.quickbitedelivery.service.CategoryService;
 import summer_projects.quickbitedelivery.service.DishFlavorService;
@@ -35,6 +36,9 @@ public class DishController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private DishFlavorService dishFlavorService;
 
     @PostMapping
     public R<String> save(@RequestBody DishDto dishDto) {
@@ -125,13 +129,10 @@ public class DishController {
     }
 
     @GetMapping("/list")
-    public R<List<Dish>> getDishByCategory(Dish dish) {
-        LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
-        //查询状态为1（在售状态）的菜品
-        wrapper.eq(Dish::getStatus, 1);
-        List<Dish> list = dishService.list(wrapper);
-        return R.success(list);
+    public R<List<DishDto>> getDishDtoByCategory(Dish dish) {
+        List<DishDto> dishDtos = dishService.getDishDto(dish);
+
+        return R.success(dishDtos);
     }
 }
 

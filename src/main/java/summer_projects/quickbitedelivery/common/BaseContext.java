@@ -3,7 +3,7 @@ package summer_projects.quickbitedelivery.common;
 public class BaseContext {
     private static ThreadLocal<Long> threadLocal = new ThreadLocal<>();
 
-    public static void setCurentId(Long id) {
+    public static void setCurrentId(Long id) {
         threadLocal.set(id);
     }
 
