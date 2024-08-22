@@ -20,3 +20,6 @@ public class QuickBiteDeliveryApplication {
         log.info("项目启动成功...");
     }
 }
+
+//项目待做的事情：
+//gitignore文件的内容填充一下
