@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import summer_projects.quickbitedelivery.common.R;
@@ -25,6 +26,8 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     private DishFlavorService dishFlavorService;
     @Autowired
     private DishMapper dishMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * add a new dish and guarantee the flavors are saved as well
@@ -32,6 +35,12 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
      * @param dishDto
      */
     public void saveWithFlavor(DishDto dishDto) {
+        //添加create_user的信息，因为网页没有传过来。
+        // 但是我有让自动生成也不管用，后面再看看怎么优化吧
+        //现在先手动设置一下
+        dishDto.setCreateUser(1L);
+        dishDto.setUpdateUser(1L);
+
         //save basic info of dish into the table "dish"
         this.save(dishDto);
 
@@ -45,9 +54,12 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             return item;
         }).collect(Collectors.toList());
 
-
         //save the flavor related info to the flavor table
         dishFlavorService.saveBatch(dishDto.getFlavors());
+
+        //如果某一个类添加了新的菜品，要清理缓存
+        String key = "category_" + dishDto.getCategoryId() + "_" + dishDto.getStatus();
+        redisTemplate.delete(key);
 
     }
 
@@ -81,6 +93,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     @Override
     @Transactional
     public void updateWithFlavor(DishDto dishDto) {
+
         //save basic info of dish into the table "dish"
         dishMapper.updateById(dishDto);
 
@@ -102,10 +115,25 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         //save the flavor related info to the flavor table
         dishFlavorService.saveBatch(flavors);
 
+        //如果某一个类中的任何信息进行了更新，要清理缓存
+        String key = "category_" + dishDto.getCategoryId() + "_" + dishDto.getStatus();
+        redisTemplate.delete(key);
+
     }
 
     @Override
     public List<DishDto> getDishDto(Dish dish) {
+
+        //动态构造给redis的key
+        String key = "category_" + dish.getCategoryId() + "_" + dish.getStatus();
+        //先从redis里面获取缓存数据
+        List<DishDto> dtoListRedis = (List<DishDto>) redisTemplate.opsForValue().get(key);
+        //如果有数据，直接返回
+        if (dtoListRedis != null) {
+            return dtoListRedis;
+        }
+
+        //如果没有，再从数据库里面查询数据
         LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
         //查询状态为1（在售状态）的菜品
@@ -124,6 +152,9 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             dishDto.setFlavors(flavors);
             return dishDto;
         }).collect(Collectors.toList());
+
+        //查询完数据库之后把数据缓存在redis里面
+        redisTemplate.opsForValue().set(key, collect);
         return collect;
     }
 

@@ -17,8 +17,8 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         metaObject.setValue("createTime", LocalDateTime.now());
         metaObject.setValue("updateTime", LocalDateTime.now());
         //为了移动端添加地址要把这里暂时注释掉
-        //metaObject.setValue("createUser", BaseContext.getCurrentId());
-        //metaObject.setValue("updateUser", BaseContext.getCurrentId());
+  //      metaObject.setValue("createUser", BaseContext.getCurrentId());
+//        metaObject.setValue("updateUser", BaseContext.getCurrentId());
 
     }
 
@@ -29,7 +29,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
 
         metaObject.setValue("updateTime", LocalDateTime.now());
 
-        metaObject.setValue("updateUser", BaseContext.getCurrentId());
+        //metaObject.setValue("updateUser", BaseContext.getCurrentId());
 
         //check the current thread
         long id = Thread.currentThread().getId();

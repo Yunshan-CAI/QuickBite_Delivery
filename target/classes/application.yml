@@ -10,6 +10,11 @@ spring:
       url: jdbc:mysql://localhost:3306/quickbite?serverTimezone=Europe/Amsterdam&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: root
       password: new_password
+  redis:
+    host: 192.168.43.128
+    port: 6379
+    password: '741619'
+    database: 0
 mybatis-plus:
   configuration:
     #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
@@ -24,5 +29,7 @@ mybatis-plus:
           summer_projects.quickbitedelivery.config: DEBUG
 quickbite:
   path: /Users/wentibaobao/Desktop/QuickBite Delivery/upload/
+
+
 
 

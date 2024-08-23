@@ -11,9 +11,9 @@ spring:
       username: root
       password: new_password
   redis:
-    host: localhost
+    host: 192.168.43.128
     port: 6379
-    password: root@741619
+    password: '741619'
     database: 0
 mybatis-plus:
   configuration:
