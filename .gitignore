@@ -1,0 +1,7 @@
+# Ignore IntelliJ IDEA project files
+.idea/
+
+# Ignore Maven target directory
+target/
+
+#这个文件我的不标准 还得研究一下怎么弄
