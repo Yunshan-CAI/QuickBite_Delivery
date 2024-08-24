@@ -33,9 +33,7 @@ INSERT INTO `setmeal` VALUES ('1415580119015145474', '1413386191767674881', '儿
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="e6647522-9e6c-44ea-a30e-5eac7997b895" object-ref="schemas/quickbite/tables/user" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="e6647522-9e6c-44ea-a30e-5eac7997b895" />
