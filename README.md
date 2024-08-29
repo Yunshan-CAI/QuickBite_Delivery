@@ -5,7 +5,7 @@ QuickBite Delivery is a restaurant delivery platform backend developed using Spr
 ## Features ✨
 
 - **Backstage Management**: Efficiently manage categories, and dishes, and setmeals with functionalities to add, update, delete, and list them. Additionally, oversee employee and order management to ensure smooth operations 🍲.
-- **Order Management**: Provides backend support for frontend ordering functionality, including data retrieval and SQL updates for orders 🛒📊.
+- **Order Management**: Provides backend support for frontend ordering functionality, including data retrieval and SQL updates for orders 🛒.
 - **Caching**: Uses Redis to cache dish data for improved performance ⚡.
 - **Transactional Operations**: Ensures data integrity with transactional methods 💼.
 
@@ -36,7 +36,23 @@ Ensure that MyBatis-Plus is properly configured in your project.
    git clone <repository-url>
    
 2. **Navigate to the project directory:**
+   ```bash
    cd <project-directory>
-4. 
+   
+3. **Install dependencies(Maven):**
+   ```bash
+   mvn install
+   
+4. **Access the API:**
+Once the application is running, you can access the API endpoints through the configured port (default is 8080).
+Open your browser or API client and navigate to: http://localhost:8080.
+
+5. **Additional Configuration:**
+Redis: Ensure that Redis is installed and running if you are using caching. The application uses Redis for caching dish data.
+Database: Make sure your database is set up and properly configured in application.yml.
+If you need to adjust any configuration settings, edit the application.yml file accordingly.
+
+
+
 
 
