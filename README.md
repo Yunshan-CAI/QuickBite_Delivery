@@ -5,7 +5,7 @@ QuickBite Delivery is a restaurant delivery platform backend developed using Spr
 ## Features ✨
 
 - **Backstage Management**: Efficiently manage categories, and dishes, and setmeals with functionalities to add, update, delete, and list them. Additionally, oversee employee and order management to ensure smooth operations 🍲.
-- **Order Management**: Provides backend support for frontend ordering functionality, including data retrieval and SQL updates for orders 🛒.
+- **Order Management**: Provides backend support for frontend ordering functionality, including data retrieval and SQL updates for orders.
 - **Caching**: Uses Redis to cache dish data for improved performance ⚡.
 - **Transactional Operations**: Ensures data integrity with transactional methods 💼.
 
