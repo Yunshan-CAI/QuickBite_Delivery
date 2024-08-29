@@ -17,13 +17,13 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="e6647522-9e6c-44ea-a30e-5eac7997b895">
-      <console name="quickbite" type="STANDARD" schema="quickbite" session="Main"><![CDATA[SELECT d.*, d.name AS dish_name 
+      <console name="quickbite" type="STANDARD" schema="quickbite" session="Main">SELECT d.*, d.name AS dish_name 
 FROM dish d 
 LEFT JOIN category c 
 ON d.category_id = c.id 
 WHERE d.name like '%鸡%'
 
-INSERT INTO `setmeal` VALUES ('1415580119015145474', '1413386191767674881', '儿童套餐A计划', '4000.00', '1', '', '', '61d20592-b37f-4d72-a864-07ad5bb8f3bb.jpg', '2021-07-15 15:52:55', '2021-07-15 15:52:55', '1415576781934608386', '1415576781934608386', '0');]]></console>
+INSERT INTO `setmeal` VALUES ('1415580119015145474', '1413386191767674881', '儿童套餐A计划', '4000.00', '1', '', '', '61d20592-b37f-4d72-a864-07ad5bb8f3bb.jpg', '2021-07-15 15:52:55', '2021-07-15 15:52:55', '1415576781934608386', '1415576781934608386', '0');</console>
     </connection>
     <connection id="8dda7f91-0a65-45f1-a46c-97fd17e743d4">
       <console name="Connection" type="STANDARD" schema="" session="Main" />

@@ -31,10 +31,16 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
 
     @Override
     public void saveWithDishes(SetmealDto setmealDto) {
+        //手动设置create user和update user
+        setmealDto.setCreateUser(1L);
+        setmealDto.setUpdateUser(1L);
         this.save(setmealDto);
         List<SetmealDish> setmealDishes = setmealDto.getSetmealDishes();
         Long id = setmealDto.getId();
         for (SetmealDish setmealDish : setmealDishes) {
+            //手动设置setmeal dish表里的create user和update user
+            setmealDish.setCreateUser(1L);
+            setmealDish.setUpdateUser(1L);
             setmealDish.setSetmealId(id);
         }
         setmealDishService.saveBatch(setmealDishes);
@@ -79,14 +85,16 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
     }
 
     @Override
-    public void setStatus(Long ids, int statusNum) {
-        LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ids != null, Setmeal::getId, ids);
+    public void setStatus(List<Long> ids, int statusNum) {
+        for (Long id : ids) {
+            LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(id != null, Setmeal::getId, id);
 
-        Setmeal setmeal = this.getById(ids);
-        setmeal.setStatus(statusNum);
+            Setmeal setmeal = this.getById(id);
+            setmeal.setStatus(statusNum);
 
-        this.update(setmeal, wrapper);
+            this.update(setmeal, wrapper);
+        }
     }
 
     @Override

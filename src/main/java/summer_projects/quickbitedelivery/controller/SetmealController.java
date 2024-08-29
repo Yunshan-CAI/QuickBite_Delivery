@@ -1,26 +1,19 @@
 package summer_projects.quickbitedelivery.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
-import summer_projects.quickbitedelivery.common.CustomException;
 import summer_projects.quickbitedelivery.common.R;
 import summer_projects.quickbitedelivery.dto.SetmealDto;
-import summer_projects.quickbitedelivery.entity.Category;
-import summer_projects.quickbitedelivery.entity.Dish;
 import summer_projects.quickbitedelivery.entity.Setmeal;
-import summer_projects.quickbitedelivery.entity.SetmealDish;
 import summer_projects.quickbitedelivery.service.CategoryService;
 import summer_projects.quickbitedelivery.service.SetmealDishService;
 import summer_projects.quickbitedelivery.service.SetmealService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/setmeal")
@@ -70,7 +63,7 @@ public class SetmealController {
      * @return
      */
     @PostMapping("/status/{statusNum}")
-    public R<String> setStatus(Long ids, @PathVariable int statusNum) {
+    public R<String> setStatus(@RequestParam List<Long> ids, @PathVariable int statusNum) {
         setmealService.setStatus(ids, statusNum);
         return R.success("Successfully changed setmeal status");
     }
@@ -88,7 +81,6 @@ public class SetmealController {
         return R.success("Successfully deleted the setmeal");
     }
 
-    //数据传到前端了但不知道为什么套餐包含的菜品无法显示在页面上，我觉得是因为前端没有写
     @GetMapping("/list")
     @Cacheable(value = "setmealCache", key = "#setmeal.categoryId+'_'+#setmeal.status")
     public R<List<SetmealDto>> getSetmealDtos(Setmeal setmeal) {

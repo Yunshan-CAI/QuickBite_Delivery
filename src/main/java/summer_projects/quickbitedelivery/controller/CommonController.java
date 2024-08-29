@@ -82,8 +82,6 @@ public class CommonController {
             e.printStackTrace();
         }
 
-        //8f78598a-c6f0-44e8-9487-b2f33e92656f.jpg
-        //8f78598a-c6f0-44e8-9487-b2f33e92656f.jpg
 
     }
 }

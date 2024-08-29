@@ -1,6 +1,5 @@
 package summer_projects.quickbitedelivery.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,17 +27,17 @@ public class CategoryController {
     @PostMapping
     public R<String> save(@RequestBody Category category) {
         log.info("Category info {}", category);
+        //手动设置create_user和update_user
+        category.setCreateUser(1L);
+        category.setUpdateUser(1L);
         categoryService.save(category);
         return R.success("Successfully added a category");
     }
 
     @GetMapping("/page")
     public R<Page<Category>> page(int page, int pageSize) {
-        Page<Category> pageInfo = new Page<>(page, pageSize);
-        LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.orderByAsc(Category::getSort);
-        categoryService.page(pageInfo, queryWrapper);
-        return R.success(pageInfo);
+        Page<Category> returnPage = categoryService.page(page, pageSize);
+        return R.success(returnPage);
     }
 
     @DeleteMapping
@@ -51,16 +50,15 @@ public class CategoryController {
     @PutMapping
     public R<String> update(@RequestBody Category category) {
         log.info("The updated category info: {}", category);
+        //手动设置update_user
+        category.setUpdateUser(1L);
         categoryService.updateById(category);
         return R.success("The category has been updatedd.");
     }
 
     @GetMapping("/list")
     public R<List<Category>> list(Category category) {
-        LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(category.getType() != null, Category::getType, category.getType());
-        queryWrapper.orderByAsc(Category::getSort).orderByDesc(Category::getUpdateTime);
-        List<Category> list = categoryService.list(queryWrapper);
-        return R.success(list);
+        List<Category> returnList = categoryService.list(category);
+        return R.success(returnList);
     }
 }

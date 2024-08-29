@@ -18,7 +18,7 @@ public interface SetmealService extends IService<Setmeal> {
 
     Page page(int page, int pageSize, String name);
 
-    void setStatus(Long ids, int statusNum);
+    void setStatus(List<Long> ids, int statusNum);
 
     List<SetmealDto> getSetmealDtos(Setmeal setmeal);
 

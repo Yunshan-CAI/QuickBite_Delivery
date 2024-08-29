@@ -1,6 +1,7 @@
 package summer_projects.quickbitedelivery.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ import summer_projects.quickbitedelivery.service.CategoryService;
 import summer_projects.quickbitedelivery.service.DishService;
 import summer_projects.quickbitedelivery.service.SetmealService;
 
+import java.util.List;
+
 @Service
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
 
@@ -22,6 +25,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Autowired
     private SetmealService setmealService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Override
     public void remove(Long ids) {
@@ -50,5 +56,23 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         //remove the category
         super.removeById(ids);
 
+    }
+
+    @Override
+    public Page<Category> page(int page, int pageSize) {
+        Page<Category> pageInfo = new Page<>(page, pageSize);
+        LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByAsc(Category::getSort);
+        categoryService.page(pageInfo, queryWrapper);
+        return pageInfo;
+    }
+
+    @Override
+    public List<Category> list(Category category) {
+        LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(category.getType() != null, Category::getType, category.getType());
+        queryWrapper.orderByAsc(Category::getSort).orderByDesc(Category::getUpdateTime);
+        List<Category> list = categoryService.list(queryWrapper);
+        return list;
     }
 }

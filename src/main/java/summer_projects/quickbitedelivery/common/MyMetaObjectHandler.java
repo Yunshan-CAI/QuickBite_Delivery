@@ -19,6 +19,11 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         //为了移动端添加地址要把这里暂时注释掉
   //      metaObject.setValue("createUser", BaseContext.getCurrentId());
 //        metaObject.setValue("updateUser", BaseContext.getCurrentId());
+        //为了防止insertFill覆盖我手动设置的create_user值
+        Object createUser = metaObject.getValue("createUser");
+        if (createUser == null) {
+            metaObject.setValue("createUser", BaseContext.getCurrentId());
+        }
 
     }
 
@@ -29,7 +34,11 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
 
         metaObject.setValue("updateTime", LocalDateTime.now());
 
-        //metaObject.setValue("updateUser", BaseContext.getCurrentId());
+       //为了防止updateFill覆盖我手动设置的update_user值
+        Object updateUser = metaObject.getValue("updateUser");
+        if (updateUser == null) {
+            metaObject.setValue("updateUser", BaseContext.getCurrentId());
+        }
 
         //check the current thread
         long id = Thread.currentThread().getId();

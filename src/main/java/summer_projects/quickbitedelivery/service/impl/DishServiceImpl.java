@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import summer_projects.quickbitedelivery.common.CustomException;
 import summer_projects.quickbitedelivery.common.R;
 import summer_projects.quickbitedelivery.dto.DishDto;
 import summer_projects.quickbitedelivery.entity.Dish;
 import summer_projects.quickbitedelivery.entity.DishFlavor;
+import summer_projects.quickbitedelivery.entity.Setmeal;
+import summer_projects.quickbitedelivery.entity.SetmealDish;
 import summer_projects.quickbitedelivery.mapper.DishMapper;
 import summer_projects.quickbitedelivery.service.DishFlavorService;
 import summer_projects.quickbitedelivery.service.DishService;
@@ -51,6 +54,9 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         List<DishFlavor> flavors = dishDto.getFlavors();
         flavors.stream().map(item -> {
             item.setDishId(id);
+            //dish flavor这个表里也需要手动设置create_user和update_user
+            item.setCreateUser(1L);
+            item.setUpdateUser(1L);
             return item;
         }).collect(Collectors.toList());
 
@@ -115,7 +121,8 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         //save the flavor related info to the flavor table
         dishFlavorService.saveBatch(flavors);
 
-        //如果某一个类中的任何信息进行了更新，要清理缓存
+        //要启动redis以保证这个方法工作
+        // 如果某一个类中的任何信息进行了更新，要清理缓存
         String key = "category_" + dishDto.getCategoryId() + "_" + dishDto.getStatus();
         redisTemplate.delete(key);
 
@@ -156,6 +163,30 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         //查询完数据库之后把数据缓存在redis里面
         redisTemplate.opsForValue().set(key, collect);
         return collect;
+    }
+
+    @Override
+    public void setStatus(List<Long> ids, int statusNum) {
+        for (Long id : ids) {
+            LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(id != null, Dish::getId, id);
+
+            Dish dish = this.getById(id);
+            dish.setStatus(statusNum);
+
+            this.update(dish, wrapper);
+        }
+    }
+
+    @Override
+    public void delete(List<Long> ids) {
+        for (Long id : ids) {
+            if (this.getById(id).getStatus() == 0) {
+                this.removeById(id);
+            } else {
+                throw new CustomException("菜品正在售卖中，不能删除");
+            }
+        }
     }
 
 }
