@@ -1,9 +1,7 @@
 package summer_projects.quickbitedelivery.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +11,6 @@ import summer_projects.quickbitedelivery.common.R;
 import summer_projects.quickbitedelivery.entity.User;
 import summer_projects.quickbitedelivery.service.UserService;
 
-import javax.servlet.http.HttpSession;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/user")

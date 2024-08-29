@@ -1,14 +1,9 @@
 package summer_projects.quickbitedelivery.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
-import summer_projects.quickbitedelivery.common.BaseContext;
 import summer_projects.quickbitedelivery.common.R;
 import summer_projects.quickbitedelivery.entity.AddressBook;
 import summer_projects.quickbitedelivery.service.AddressBookService;
@@ -32,9 +27,9 @@ public class AddressBookController {
     @PostMapping
     public R<AddressBook> save(@RequestBody AddressBook addressBook) {
         //因为我没有登录所以要手动设置这些信息
-        addressBook.setUserId(123L);
-        addressBook.setCreateUser(1417012167126876163L);
-        addressBook.setUpdateUser(1234L);
+        addressBook.setUserId(1L);
+        addressBook.setCreateUser(1L);
+        addressBook.setUpdateUser(1L);
 
         log.info("addressBook:{}", addressBook);
         addressBookService.save(addressBook);
@@ -47,16 +42,8 @@ public class AddressBookController {
     @PutMapping("default")
     public R<AddressBook> setDefault(@RequestBody AddressBook addressBook) {
         log.info("addressBook:{}", addressBook);
-        LambdaUpdateWrapper<AddressBook> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(AddressBook::getUserId, addressBook.getUserId());
-        wrapper.set(AddressBook::getIsDefault, 0);
-        //SQL:update address_book set is_default = 0 where user_id = ?
-        addressBookService.update(wrapper);
-
-        addressBook.setIsDefault(1);
-        //SQL:update address_book set is_default = 1 where id = ?
-        addressBookService.updateById(addressBook);
-        return R.success(addressBook);
+        AddressBook returnAddressBook = addressBookService.setDefault(addressBook);
+        return R.success(returnAddressBook);
     }
 
     /**
@@ -77,12 +64,7 @@ public class AddressBookController {
      */
     @GetMapping("default")
     public R<AddressBook> getDefault() {
-        LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(AddressBook::getUserId, 1417012167126876162L);
-        queryWrapper.eq(AddressBook::getIsDefault, 1);
-
-        //SQL:select * from address_book where user_id = ? and is_default = 1
-        AddressBook addressBook = addressBookService.getOne(queryWrapper);
+        AddressBook addressBook = addressBookService.getDefault();
 
         if (null == addressBook) {
             return R.error("没有找到该对象");
@@ -99,12 +81,8 @@ public class AddressBookController {
         //addressBook.setUserId(1L);
         log.info("addressBook:{}", addressBook);
 
-        //条件构造器
-        LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(AddressBook::getUserId, 1417012167126876162L);
-        queryWrapper.orderByDesc(AddressBook::getUpdateTime);
+        List<AddressBook> returnList = addressBookService.list(addressBook);
 
-        //SQL:select * from address_book where user_id = ? order by update_time desc
-        return R.success(addressBookService.list(queryWrapper));
+        return R.success(returnList);
     }
 }

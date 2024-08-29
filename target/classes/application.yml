@@ -31,7 +31,7 @@ mybatis-plus:
           root: DEBUG
           summer_projects.quickbitedelivery.config: DEBUG
 quickbite:
-  path: /Users/wentibaobao/Desktop/QuickBite Delivery/upload/
+  path: /Users/wentibaobao/IdeaProjects/QuickBite Delivery/upload/图片资源/
 
 
 

@@ -1,7 +1,53 @@
-# Ignore IntelliJ IDEA project files
+
+# 编译输出文件夹
+/target/
+/out/
+
+# IDEA 特定文件和文件夹
+/.idea/
+/*.iml
+
+# IntelliJ IDEA的文件和文件夹
 .idea/
+/*.iws
+*.iml
+*.ipr
 
-# Ignore Maven target directory
-target/
+# Maven 本地仓库，通常不需要版本控制
+/.mvn
+!.mvn/wrapper/maven-wrapper.jar
 
-#这个文件我的不标准 还得研究一下怎么弄
+# 日志文件
+*.log
+
+# 环境变量文件
+.env
+
+# Spring Boot 配置文件
+application.properties
+application.yml
+
+# 操作系统生成的文件
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.swp
+*.tmp
+
+# 包管理工具生成的锁文件（如果你使用了 Maven 或 Gradle 以外的工具）
+yarn.lock
+package-lock.json
+
+# Lombok 配置文件，通常自动生成
+.lombok.config
+
+# Java编译文件
+*.class
+
+
+# macOS 文件
+*.dmg
+
+# Linux 文件
+*~
