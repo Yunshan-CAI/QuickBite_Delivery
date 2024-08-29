@@ -33,7 +33,7 @@ Ensure that MyBatis-Plus is properly configured in your project.
 1. **Clone the repository:**
 
    ```bash
-   git clone <repository-url>
+   git clone [<repository-url>](https://github.com/Yunshan-CAI/QuickBite_Delivery.git)
    
 2. **Navigate to the project directory:**
    ```bash
