@@ -8,12 +8,12 @@ spring:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
       url: jdbc:mysql://localhost:3306/quickbite?serverTimezone=Europe/Amsterdam&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-      username:
-      password:
+      username: root
+      password: new_password
   redis:
-    host:
-    port:
-    password:
+    host: 192.168.43.128
+    port: 6379
+    password: '741619'
     database: 0
   cache:
     redis:
@@ -33,6 +33,7 @@ mybatis-plus:
 quickbite:
   path: /Users/wentibaobao/IdeaProjects/QuickBite Delivery/upload/图片资源/
 
-
+  #start the mysql server
+  # sudo /usr/local/mysql-8.4.1-macos14-arm64/support-files/mysql.server start
 
 
