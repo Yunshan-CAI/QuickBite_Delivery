@@ -56,6 +56,12 @@ Redis: Ensure that Redis is installed and running if you are using caching. The 
 Database: Make sure your database is set up and properly configured in application.yml.
 If you need to adjust any configuration settings, edit the application.yml file accordingly.
 
+## What does it look like?
+The backstage management interface:
+
+![backstage](upload/demo/backstage1.png)
+![backstage](upload/demo/backstage2.png)
+
 
 
 
