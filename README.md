@@ -63,6 +63,7 @@ The backstage management interface:
 ![backstage](upload/demo/backstage2.png)
 
 The mobile terminal for users to make orders:
+
 ![backstage](upload/demo/mobile1.png)
 ![backstage](upload/demo/mobile2.png)
 ![backstage](upload/demo/mobile3.png)
