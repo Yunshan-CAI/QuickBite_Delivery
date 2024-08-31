@@ -17,12 +17,16 @@ QuickBite Delivery is a restaurant delivery platform backend developed using Spr
 - **Spring Cache**: For efficient data retrieval and management within the application.
 - **Lombok**: To reduce boilerplate code.
 
+## Documentation
+
+I documented the errors that I think are common in CSDN (https://blog.csdn.net/wenti_baobao/article/details/141617284) in Chinese. 
+Hope you find it helpful!
 
 ## Configuration ⚙️
 
 ### Redis Configuration
 
-Ensure that Redis is installed and running. The application uses Redis for caching data. You need to have Redis up and running for the caching functionalities to work.
+Ensure that Redis is installed and running. The application uses Redis for caching data. You need to have Redis up and running for the caching functionalities to work. My redis is implemented through a Linux virtual machine.
 
 ### MyBatis-Plus Configuration
 
